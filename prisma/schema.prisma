@@ -1,0 +1,226 @@
+// ===============================
+// Prisma Schema
+// ===============================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+  DELIVERY
+}
+
+enum OrderStatus {
+  PREPARING
+  UNASSIGNED
+  COLLECTED
+  DELIVERED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  PAYPAL
+  CASH
+}
+
+enum DeliveryStatus {
+  PENDING
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+}
+
+enum NotifyStatus {
+  READ
+  UNREAD
+}
+
+model User {
+  id             String          @id @default(cuid())
+  email          String          @unique
+  emailVerified  DateTime?
+  name           String?
+  accounts       Account[]
+  sessions       Session[]
+  carts          Cart[]
+  addresses      Address[]
+  profile        Profile?
+  orders         Order[]
+  role           Role            @default(USER)
+  favorites      Favorite?
+  notifications  Notification[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  @@id([identifier, token])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Address {
+  id        String @id @default(cuid())
+  street    String
+  city      String
+  state     String
+  zipCode   String
+  userId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Profile {
+  id     String @id @default(cuid())
+  bio    String?
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Cart {
+  id       String     @id @default(cuid())
+  userId   String
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items    CartItem[]
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  orderId   String?  // optional until it's checked out
+  order     Order?   @relation(fields: [orderId], references: [id])
+  quantity  Int
+  productId String
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique
+  items           CartItem[]    // renamed from cart
+  orderDate       DateTime      @default(now())
+  deliveryTime    DateTime?
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userEmail       String
+  userName        String
+  userPhone       String
+  paymentToken    String?
+  paid            Boolean       @default(false)
+  delivery        Delivery?
+  deliveryAddress String
+  deliveryFee     Float         @default(4)
+  serviceFee      Float         @default(3)
+  payment         Payment?      @relation("orderPayment")
+  status          OrderStatus   @default(PREPARING)
+  note            String?
+  discount        Float?
+  total           Float
+  createdAt       DateTime      @default(now())
+}
+
+model Payment {
+  id        String         @id @default(cuid())
+  orderId   String          @unique
+  order     Order           @relation("orderPayment", fields: [orderId], references: [id], onDelete: Cascade)
+  status    PaymentStatus   @default(PENDING)
+  amount    Float
+  method    PaymentMethod
+  createdAt DateTime        @default(now())
+}
+
+model Delivery {
+  id          String          @id @default(cuid())
+  orderId     String           @unique
+  order       Order            @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  driverEmail String
+  driverName  String
+  status      DeliveryStatus   @default(PENDING)
+  eta         DateTime?
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Restaurant {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @default("6 Akobo, Ibadan, Nigeria")
+  address     String
+  phone       String?
+  bannerImg   String
+  rating      Float    @default(4.5)
+  isAcive   Boolean  @default(true)
+  meals       Meal[]
+  openTimes   Json?
+  baseDeliveryFee Float      @default(3.5)    // Minimum delivery fee
+  serviceFeeRate  Float      @default(0.1)    // 10% service fee (platform cut)
+  distanceRate    Float      @default(0.5)    // ₦0.5 per km/mile distance multiplier
+}
+
+model Meal {
+  id           String      @id @default(cuid())
+  name         String
+  description  String?
+  price        Float
+  restaurantId String
+  restaurant   Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  imageUrl     String?
+  isAvailable  Boolean     @default(true)
+  category     String
+}
+
+model Notification {
+  id        String       @id @default(cuid())
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  content   String
+  status    NotifyStatus @default(UNREAD)
+}
