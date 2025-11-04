@@ -1,9 +1,24 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-     
-    </div>
-  );
+	const [message, setMessage] = useState("");
+
+	useEffect(() => {
+		fetch("/api/graphql", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ query: "{ hello }" }),
+		})
+			.then((res) => res.json())
+			.then((data) => setMessage(data.data.hello));
+	}, []);
+
+	return (
+		<div>
+			<h1>GraphQL Test</h1>
+			<p>{message}</p>
+		</div>
+	);
 }
