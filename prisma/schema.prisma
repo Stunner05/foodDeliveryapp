@@ -195,7 +195,7 @@ model Restaurant {
   bannerImg   String
   rating      Float    @default(4.5)
   isAcive   Boolean  @default(true)
-  meals       Meal[]
+  meals       Meal[] 
   openTimes   Json?
   baseDeliveryFee Float      @default(3.5)    // Minimum delivery fee
   serviceFeeRate  Float      @default(0.1)    // 10% service fee (platform cut)

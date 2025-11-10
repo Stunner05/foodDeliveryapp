@@ -2,11 +2,26 @@ import prisma from "@/lib/prisma";
 import GraphQLJSON from "graphql-type-json";
 import { Restaurant } from "@prisma/client";
 
+interface MealCreateWithoutRestaurantInput {
+	name: string;
+	description?: string;
+	price: number;
+	category: string;
+}
+
 interface RestaurantInput {
 	name: string;
 	address: string;
 	phone: string;
 	bannerImg: string;
+	meals?: MealCreateWithoutRestaurantInput[];
+}
+
+interface RestaurantUpdateInput {
+	name?: string;
+	address?: string;
+	phone?: string;
+	bannerImg?: string;
 }
 
 interface Mutation {
@@ -93,6 +108,7 @@ export const mealResolvers = {
 			});
 			return newMeal;
 		},
+
 		updateMeal: async (
 			_: any,
 			{ id, data }: { id: string; data: MealUpdateInput }
@@ -103,6 +119,7 @@ export const mealResolvers = {
 			});
 			return updatedMeal;
 		},
+
 		deleteMeal: async (_: any, { id }: { id: string }) => {
 			const deletedMeal = await prisma.meal.delete({
 				where: { id },
@@ -124,18 +141,34 @@ export const restauarantMutationResolvers = {
 					address: data.address,
 					bannerImg: data.bannerImg,
 					phone: data.phone,
+					meals: {
+						create:
+							data.meals?.map((meal) => ({
+								name: meal.name,
+								description: meal.description,
+								price: meal.price,
+								category: meal.category,
+							})) || [],
+					},
 				},
+				include: { meals: true },
 			});
 			return newRestaurant;
 		},
 
 		updateRestaurant: async (
 			_: any,
-			{ id, data }: { id: string; data: RestaurantInput }
+			{ id, data }: { id: string; data: RestaurantUpdateInput }
 		) => {
 			const updateRestaurant = await prisma.restaurant.update({
 				where: { id },
-				data,
+				data: {
+					name: data.name,
+					address: data.address,
+					phone: data.phone,
+					bannerImg: data.bannerImg,
+				},
+				include: { meals: true },
 			});
 			return updateRestaurant;
 		},

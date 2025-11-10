@@ -10,17 +10,36 @@ scalar Json
     bannerImg: String!
 
   }
+
+input RestaurantUpdateInput {
+  name: String
+  address: String
+  phone: String
+  bannerImg: String
+}
+
 input RestaurantInput {
   name: String!
   address: String!
   phone: String!
+  bannerImg: String!
+  meals: [MealsCreateWithoutRestaurantIdInput!]
+
 }
 
   input MealCreateInput {
     name: String!
     description: String
     price: Float!
+    category: String!
     restaurantId: ID!
+  }
+
+  input MealsCreateWithoutRestaurantIdInput {
+    name: String!
+    description: String
+    price: Float!
+    category: String!
   }
 
   input UpdateMealInput {
@@ -58,15 +77,10 @@ input RestaurantInput {
     meal(id: ID!): Meal
   }
 
-  type Query {
-    _empty: String
-  }
-
   type Mutation {
     addRestaurant(data: RestaurantInput!): Restaurant!
-    updateRestaurant(id: ID!, data: RestaurantInput!): Restaurant!
+    updateRestaurant(id: ID!, data: RestaurantUpdateInput!): Restaurant!
     deleteRestaurant(id: ID!): DeletedResponse!
-
     addMeal(data: MealCreateInput!): Meal!
     updateMeal(id: ID!, data: UpdateMealInput!): Meal!
     deleteMeal(id: ID!): DeletedMealResponse!
