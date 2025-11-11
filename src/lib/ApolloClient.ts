@@ -1,0 +1,11 @@
+// lib/ApolloClient.ts
+import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
+
+const client = new ApolloClient({
+	link: new HttpLink({
+		uri: "http://localhost:3000/api/graphql", // 👈 your local GraphQL endpoint
+	}),
+	cache: new InMemoryCache(),
+});
+
+export default client;

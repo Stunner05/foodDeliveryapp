@@ -1,24 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
+import Header from "./components/common/Header/Header";
+import Footer from "./components/common/Header/Footer";
+import MenuSection from "./components/common/MenuSection";
+import { Sidebar } from "lucide-react";
+import ClientRestaurants from "@/queries/GetRestaurants";
+
+
 
 export default function Home() {
-	const [message, setMessage] = useState("");
-
-	useEffect(() => {
-		fetch("/api/graphql", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ query: "{ hello }" }),
-		})
-			.then((res) => res.json())
-			.then((data) => setMessage(data.data.hello));
-	}, []);
-
+	
 	return (
-		<div>
-			<h1>GraphQL Test</h1>
-			<p>{message}</p>
-		</div>
+		<main>
+			<Header />
+			<Sidebar />
+			<div>
+				<h1>GraphQL Test</h1>
+
+			</div>
+			<ClientRestaurants />
+
+			<MenuSection />
+
+			<Footer />
+
+		</main>
 	);
 }

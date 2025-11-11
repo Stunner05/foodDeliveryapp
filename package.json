@@ -9,6 +9,7 @@
 		"lint": "eslint"
 	},
 	"dependencies": {
+		"@apollo/client": "^4.0.9",
 		"@apollo/server": "^4.12.2",
 		"@as-integrations/next": "^4.1.0",
 		"@emotion/react": "^11.14.0",
@@ -36,7 +37,7 @@
 		"embla-carousel-react": "^8.6.0",
 		"flyonui": "^2.4.1",
 		"framer-motion": "^12.23.22",
-		"graphql": "^16.8.1",
+		"graphql": "^16.12.0",
 		"graphql-tag": "^2.12.6",
 		"graphql-type-json": "^0.3.2",
 		"leaflet": "^1.9.4",
@@ -54,6 +55,7 @@
 		"react-leaflet": "^5.0.0",
 		"react-otp-input": "^3.1.1",
 		"react-toastify": "^11.0.5",
+		"rxjs": "^7.8.2",
 		"sonner": "^2.0.7",
 		"stripe": "^19.1.0",
 		"tailwind-merge": "^3.3.1",
