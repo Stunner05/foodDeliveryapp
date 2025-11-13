@@ -9,7 +9,7 @@
 		"lint": "eslint"
 	},
 	"dependencies": {
-		"@apollo/client": "^4.0.9",
+		"@apollo/client": "^3.14.0",
 		"@apollo/server": "^4.12.2",
 		"@as-integrations/next": "^4.1.0",
 		"@emotion/react": "^11.14.0",
@@ -63,6 +63,8 @@
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3",
+		"@graphql-codegen/cli": "^6.0.1",
+		"@graphql-codegen/typescript-react-apollo": "^4.3.3",
 		"@tailwindcss/postcss": "^4",
 		"@types/node": "^20.19.24",
 		"@types/react": "^19",
