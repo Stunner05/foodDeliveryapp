@@ -1,6 +1,6 @@
-import Header from "@/components/Header";
-import Hero from "@/components/Hero";
-import AppDownload from "@/components/AppDownload";
+import Header from "../app/components/Header";
+import Hero from "../app/components/HeroSection";
+import AppDownload from "../app/components/AppDownload";
 
 export default function Home() {
 	return (

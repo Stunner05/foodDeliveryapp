@@ -7,7 +7,7 @@ import {
 	IceCream,
 	Pizza,
 } from "lucide-react";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 
 export default function AppDownload() {
 	return (

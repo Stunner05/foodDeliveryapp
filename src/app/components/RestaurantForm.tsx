@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const RestaurantForm = () => {
-  return (
-    <div>RestaurantForm</div>
-  )
-}
+	return <div>RestaurantForm</div>;
+};
 
-export default RestaurantForm
+export default RestaurantForm;
